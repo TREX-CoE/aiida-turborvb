@@ -1,0 +1,62 @@
+{
+    "name": "aiida-turborvb",
+    "author": "The Turbo Team",
+    "author_email": "",
+    "description": "AiiDA TurboRVB plugin.",
+    "url": "https://todo.nothing/",
+    "license": "MIT",
+    "classifiers": [
+        "Programming Language :: Python",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Framework :: AiiDA"
+    ],
+    "version": "0.0.-10",
+    "entry_points": {
+        "aiida.data": [
+        ],
+        "aiida.calculations": [
+            "turborvb.makefort10wrp = aiida_turborvb.makefort10.wrapper.calculation:TurboRVBMakefort10CalculationWRP",
+            "turborvb.convertfort10molwrp = aiida_turborvb.convertfort10mol.wrapper.calculation:TurboRVBConvertfort10molCalculationWRP",
+            "turborvb.prepwrp = aiida_turborvb.prep.wrapper.calculation:TurboRVBPrepCalculationWRP",
+            "turborvb.assemblingpseudowrp = aiida_turborvb.assemblingpseudo.wrapper.calculation:TurboRVBAssemblingpseudoCalculationWRP",
+            "turborvb.vmcoptwrp = aiida_turborvb.vmcopt.wrapper.calculation:TurboRVBVmcoptCalculationWRP",
+            "turborvb.vmcwrp = aiida_turborvb.vmc.wrapper.calculation:TurboRVBVmcCalculationWRP",
+            "turborvb.lrdmcwrp = aiida_turborvb.lrdmc.wrapper.calculation:TurboRVBLrdmcCalculationWRP"
+        ],
+        "aiida.parsers": [
+            "turborvb.makefort10wrp = aiida_turborvb.makefort10.wrapper.parser:TurboRVBMakefort10ParserWRP",
+            "turborvb.convertfort10molwrp = aiida_turborvb.convertfort10mol.wrapper.parser:TurboRVBConvertfort10molParserWRP",
+            "turborvb.prepwrp = aiida_turborvb.prep.wrapper.parser:TurboRVBPrepParserWRP",
+            "turborvb.assemblingpseudowrp = aiida_turborvb.assemblingpseudo.wrapper.parser:TurboRVBAssemblingpseudoParserWRP",
+            "turborvb.vmcoptwrp = aiida_turborvb.vmcopt.wrapper.parser:TurboRVBVmcoptParserWRP",
+            "turborvb.vmcwrp = aiida_turborvb.vmc.wrapper.parser:TurboRVBVmcParserWRP",
+            "turborvb.lrdmcwrp = aiida_turborvb.lrdmc.wrapper.parser:TurboRVBLrdmcParserWRP"
+        ],
+        "aiida.workflows": [
+            "turborvb.dftwrps = aiida_turborvb.workflows.dft_chain:DFT",
+            "turborvb.qmcwrps = aiida_turborvb.workflows.qmc_chain:QMC"
+        ]
+    },
+    "include_package_data": true,
+    "setup_requires": ["reentry"],
+    "reentry_register": true,
+    "install_requires": [
+        "aiida-core>=1.1.0,<2.0.0",
+        "voluptuous"
+    ],
+    "extras_require": {
+        "testing": [
+            "pgtest~=1.3.1",
+            "wheel~=0.31",
+            "coverage",
+            "pytest~=6.0",
+            "pytest-cov"
+        ],
+        "pre-commit": [
+        ],
+        "docs": [
+        ]
+    }
+}
