@@ -9,10 +9,8 @@ from aiida.orm import SinglefileData, Dict, Str, StructureData
 
 class TurboRVBAssemblingpseudoCalculationWRP(CalcJob):
     """
-    AiiDA calculation plugin for TurboRVB.
+    AiiDA calculation plugin for TurboRVB assembling pseudo binary.
 
-    Serves as a calculation job provider for TurboRVB main executable,
-    for execution of quantum monte carlo calculations
     """
 
     @classmethod
@@ -26,10 +24,10 @@ class TurboRVBAssemblingpseudoCalculationWRP(CalcJob):
             'num_machines': 1,
             'num_mpiprocs_per_machine': 1,
         }
-        spec.input('fort10', valid_type=SinglefileData, help='')
-        spec.input('parameters', valid_type=Dict, help='')
+        spec.input('fort10', valid_type=SinglefileData, help='Input fort.10')
+        spec.input('parameters', valid_type=Dict, help='Input parameters, only one is necessary: The name of the pseudo family')
 
-        spec.output('pseudo', valid_type=SinglefileData, help='')
+        spec.output('pseudo', valid_type=SinglefileData, help='Output pseudo')
 
         spec.inputs['metadata']['options']['parser_name'].default = 'turborvb.assemblingpseudowrp'
         spec.inputs['metadata']['options']['input_filename'].default = 'execute.sh'
