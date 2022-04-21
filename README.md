@@ -69,12 +69,12 @@ The ultimate goal is to change to use CalcJobs which uses Turbo-Genius API. Howe
 
 Name | WRP | INT | SA |
 --- | --- | --- | ---  
-Makefort10 | X |  | X |
-Convertfort10mol | X |  |  |
-Assembling pseudo | X |  | X |
-TurboDFT(prep) | X |  |  |
-VMC (opt) | X |  |  |
-VMC | X |  |  |
-DMC | X |  |  |
+Makefort10 | ✅ |  | ✅ |
+Convertfort10mol | ✅ |  |  |
+Assembling pseudo | ✅ |  | ✅ |
+TurboDFT(prep) | ✅ |  |  |
+VMC (opt) | ✅ |  |  |
+VMC | ✅ |  |  |
+DMC | ✅ |  |  |
 
 [TurboRVB]: https://people.sissa.it/~sorella/TurboRVB_Manual/build/html/index.html
