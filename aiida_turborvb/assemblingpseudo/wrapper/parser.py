@@ -1,0 +1,34 @@
+from aiida.engine import ExitCode
+from aiida.parsers.parser import Parser
+from aiida.plugins import CalculationFactory
+from aiida.common import exceptions
+from aiida.orm import Float, SinglefileData
+
+class TurboRVBAssemblingpseudoParserWRP(Parser):
+    """
+    Parser class for parsing output of calculation.
+    """
+    def __init__(self, node):
+        """
+        Initialize Parser instance
+
+        Checks that the ProcessNode being passed was produced by a DiffCalculation.
+
+        :param node: ProcessNode of calculation
+        :param type node: :class:`aiida.orm.ProcessNode`
+        """
+        super().__init__(node)
+
+    def parse(self, **kwargs):
+        """
+        Parse outputs, store results in database.
+
+        :returns: an exit code, if parsing fails (or nothing if parsing succeeds)
+        """
+
+        files_retrieved = self.retrieved.list_object_names()
+        with self.retrieved.open("pseudo.dat", 'rb') as handle:
+            pseudo_file = SinglefileData(file=handle)
+        self.out('pseudo', pseudo_file)
+
+        return ExitCode(0)

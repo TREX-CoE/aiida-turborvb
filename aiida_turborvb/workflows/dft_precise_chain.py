@@ -1,5 +1,5 @@
 from aiida.orm import Int, Float, Dict, StructureData, Code, Str
-from aiida.engine import WorkChain, ToContext, calcfunction, if_
+from aiida.engine import WorkChain, ToContext, calcfunction, if_, while_
 from aiida.plugins.factories import CalculationFactory
 
 from aiida.engine import run
@@ -17,10 +17,7 @@ def add_this(name, src, dst):
 def prepare_MF10_pars(pars):
     p = pars.get_dict()
     ret = {}
-    for prop in ("basis",
-                 "basisjas",
-                 "pseudo",
-                 ):
+    for prop in ("basis", "pseudo"):
         add_this(prop, p, ret)
     ret = Dict(dict=ret)
     return ret
@@ -40,7 +37,7 @@ def prepare_CF10M_pars(pars):
     return ret
 
 @calcfunction
-def prepare_PREP_pars(pars, structure):
+def prepare_PREP_pars(pars, structure, density):
     p = pars.get_dict()
     structure_ = structure.get_ase()
     positions = structure_.get_positions()
@@ -54,43 +51,70 @@ def prepare_PREP_pars(pars, structure):
     box = (difference + 15) * 1.8897259886
     ret = {"box" : box}
 
-    for prop in ("box",
-                 "grid",
-                 "doublegrid",
-                ):
+    ret["grid"] = density
+
+    for prop in ("box", "doublegrid"):
         add_this(prop, p, ret)
-    #TODO move this to "add_this"
-    if "prep_namelist_update" in p:
-        ret["namelist_update"] = p["prep_namelist_update"]
     ret = Dict(dict=ret)
     return ret
+
+@calcfunction
+def calc_density_convergence(**kwargs):
+    ret = {"density" : []}
+    data = {}
+    for k, v in kwargs.items():
+        if "density" in k:
+            index = int(k.replace("density_",""))
+            if index not in data:
+                data[index] = {}
+            data[index]["density"] = v
+        if "energy" in k:
+            index = int(k.replace("energy_",""))
+            if index not in data:
+                data[index] = {}
+            data[index]["energy"] = v
+    for index, d in data.items():
+        if len(d) != 2: continue
+        ret["density"].append([d["density"], d["energy"]])
+
+    return Dict(dict = ret)
+
 
 @calcfunction
 def get_energy():
     return Float(0.0)
 
-class DFT(WorkChain):
+class DFTPrecise(WorkChain):
     """
-    A workflow for DFT calculation using TurboDFT
+    A workflow for DFT precise calculation using TurboDFT
     """
 
     @classmethod
     def define(cls, spec):
-        super(DFT, cls).define(spec)
+        super(DFTPrecise, cls).define(spec)
         spec.input("mf10_code", valid_type = Code)
         spec.input("ap_code", valid_type = Code)
         spec.input("cf10m_code", valid_type = Code)
         spec.input("prep_code", valid_type = Code)
         spec.input("structure", valid_type = StructureData)
         spec.input("parameters", valid_type = Dict)
-        spec.output("energy", valid_type = Float)
+        spec.output("density_convergance", valid_type = Dict)
         spec.outline(
+            cls.setup,
             cls.mf10,
             if_(cls.is_pseudo)(cls.ap),
             cls.cf10m,
-            cls.prep,
+            while_(cls.is_finished)(
+                cls.prep),
             cls.energy
         )
+
+    def setup(self):
+        self.density = 0.10
+        self.stopdensity = 0.08
+        self.deltadensity = 0.005
+        self.density += self.deltadensity
+        self.index = -1
 
     def is_pseudo(self):
         parameters = self.inputs.parameters.get_dict()
@@ -116,29 +140,46 @@ class DFT(WorkChain):
         inputs = dict( code       = self.inputs.cf10m_code,
                        fort10     = self.ctx.mf10.outputs.fort10,
                        parameters = prepare_CF10M_pars(self.inputs.parameters) )
-        try:
-            inputs["pseudo"] = self.ctx.ap.outputs.pseudo
-        except:
-            pass
         future = self.submit(Cf10m, **inputs)
         return ToContext(cf10m = future)
 
     def prep(self):
+        parameters = prepare_PREP_pars(self.inputs.parameters,
+                                                      self.inputs.structure,
+                                                      Float(self.density))
         inputs = dict( code       = self.inputs.prep_code,
                        fort10     = self.ctx.cf10m.outputs.fort10,
-                       parameters = prepare_PREP_pars(self.inputs.parameters,
-                                                      self.inputs.structure) )
+                       parameters = parameters)
         try:
             inputs["pseudo"] = self.ctx.ap.outputs.pseudo
         except:
             pass
+        self.report("Running density {}".format(self.density))
         future = self.submit(Prep, **inputs)
-        return ToContext(prep = future)
+        tocontext = {f"prep_{self.index}" : future}
+        self.report(f"Adding {tocontext} {parameters.get_dict()}")
+        return ToContext(**tocontext)
+
+    def is_finished(self):
+        self.density -= self.deltadensity
+        self.index += 1
+
+        if self.stopdensity < self.density:
+            return True
+        return False
 
     def energy(self):
-        self.out("energy", self.ctx.prep.outputs.energy)
-        try:
-            self.out("pseudo", self.ctx.prep.inputs.pseudo)
-        except:
-            pass
+        data = {}
+        while True:
+            self.index -= 1
+            if self.index < 0: break
+            prep = getattr(self.ctx, f"prep_{self.index}")
+            data[f"density_{self.index}"] = prep.inputs.parameters.get_dict()["grid"]
+            data[f"energy_{self.index}"] = prep.outputs.energy
+
+        self.report(data)
+        density_conv = calc_density_convergence(**data)
+        self.report(density_conv.get_dict())
+        self.out("density_convergance", density_conv)
+
 

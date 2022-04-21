@@ -21,9 +21,15 @@
             "turborvb.convertfort10molwrp = aiida_turborvb.convertfort10mol.wrapper.calculation:TurboRVBConvertfort10molCalculationWRP",
             "turborvb.prepwrp = aiida_turborvb.prep.wrapper.calculation:TurboRVBPrepCalculationWRP",
             "turborvb.assemblingpseudowrp = aiida_turborvb.assemblingpseudo.wrapper.calculation:TurboRVBAssemblingpseudoCalculationWRP",
+            "turborvb.assemblingpseudosa = aiida_turborvb.assemblingpseudo.stand_alone.calculation:TurboRVBAssemblingpseudoCalculationSA",
             "turborvb.vmcoptwrp = aiida_turborvb.vmcopt.wrapper.calculation:TurboRVBVmcoptCalculationWRP",
             "turborvb.vmcwrp = aiida_turborvb.vmc.wrapper.calculation:TurboRVBVmcCalculationWRP",
-            "turborvb.lrdmcwrp = aiida_turborvb.lrdmc.wrapper.calculation:TurboRVBLrdmcCalculationWRP"
+            "turborvb.lrdmcwrp = aiida_turborvb.lrdmc.wrapper.calculation:TurboRVBLrdmcCalculationWRP",
+
+            "turborvb.makefort10sa = aiida_turborvb.makefort10.stand_alone.calculation:TurboRVBMakefort10CalculationSA",
+
+            "turborvb.cutbasis = aiida_turborvb.calc.cutbasis:cutbasis",
+            "turborvb.assemblingpseudocalc = aiida_turborvb.assemblingpseudo.stand_alone.calculation:assemblingpseudoCalc"
         ],
         "aiida.parsers": [
             "turborvb.makefort10wrp = aiida_turborvb.makefort10.wrapper.parser:TurboRVBMakefort10ParserWRP",
@@ -32,10 +38,13 @@
             "turborvb.assemblingpseudowrp = aiida_turborvb.assemblingpseudo.wrapper.parser:TurboRVBAssemblingpseudoParserWRP",
             "turborvb.vmcoptwrp = aiida_turborvb.vmcopt.wrapper.parser:TurboRVBVmcoptParserWRP",
             "turborvb.vmcwrp = aiida_turborvb.vmc.wrapper.parser:TurboRVBVmcParserWRP",
-            "turborvb.lrdmcwrp = aiida_turborvb.lrdmc.wrapper.parser:TurboRVBLrdmcParserWRP"
+            "turborvb.lrdmcwrp = aiida_turborvb.lrdmc.wrapper.parser:TurboRVBLrdmcParserWRP",
+
+            "turborvb.makefort10sa = aiida_turborvb.makefort10.stand_alone.parser:TurboRVBMakefort10ParserSA"
         ],
         "aiida.workflows": [
             "turborvb.dftwrps = aiida_turborvb.workflows.dft_chain:DFT",
+            "turborvb.dftprecisewrps = aiida_turborvb.workflows.dft_precise_chain:DFTPrecise",
             "turborvb.qmcwrps = aiida_turborvb.workflows.qmc_chain:QMC"
         ]
     },
