@@ -44,6 +44,21 @@ Turbo-Genius, however, so far does not provide full flexibility of inputs and ou
 
 ### How to setup WRP code
 
+```yaml
+---
+label: "makefort10sa"
+description: "makefort10 wrapper"
+input_plugin: "turborvb.makefort10sa"
+on_computer: true
+remote_abs_path: "/absolute/path/to/turborvb/binary/directory/makefort10.x"
+computer: "Z15G3"
+prepend_text: |
+  source /home/user/Robota/ENVs/turboblank/bin/activate
+  source /home/user/Software/TurboRVB-production/gcc/sourceme
+  export PATH=/home/user/Software/TurboRVB-production/gcc/bin/:$PATH
+append_text: " "
+```
+
 ## Integrated, Calcjobs using Turbo-Genius API (INT)
 
 The ultimate goal is to change to use CalcJobs which uses Turbo-Genius API. However, Turbo-Genius is an older framework than this plugin and API is currently being prepared. For the time being one can use CalcJobs from other families.
