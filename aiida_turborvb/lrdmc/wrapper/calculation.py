@@ -71,7 +71,7 @@ class TurboRVBLrdmcCalculationWRP(CalcJob):
 
         if "pseudo" in self.inputs:
             with folder.open("pseudo.dat", "w") as fhandle_out, \
-                 self.inputs.fort10.open() as fhandle_in:
+                 self.inputs.pseudo.open() as fhandle_in:
                 fhandle_out.write(fhandle_in.read())
 
         with folder.open(self.options.input_filename, "w") as fhandle:
