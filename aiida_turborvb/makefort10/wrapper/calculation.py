@@ -6,6 +6,10 @@ from aiida.common import datastructures
 from aiida.engine import CalcJob
 from aiida.orm import SinglefileData, Dict, Str, StructureData
 
+parameters_help = """
+Input parameters, one can setup basis, jasbasis and pseudo from Turbo-Genius database
+"""
+
 class TurboRVBMakefort10CalculationWRP(CalcJob):
     """
     AiiDA calculation plugin for TurboRVB.
@@ -25,10 +29,10 @@ class TurboRVBMakefort10CalculationWRP(CalcJob):
             'num_machines': 1,
             'num_mpiprocs_per_machine': 1,
         }
-        spec.input('structure', valid_type=StructureData, help='')
-        spec.input('parameters', valid_type=Dict, help='')
+        spec.input('structure', valid_type=StructureData, help='Input structure')
+        spec.input('parameters', valid_type=Dict, help=parameters_help)
 
-        spec.output('fort10', valid_type=SinglefileData, help='')
+        spec.output('fort10', valid_type=SinglefileData, help='Output fort.10 file')
 
         spec.inputs['metadata']['options']['parser_name'].default = 'turborvb.makefort10wrp'
         spec.inputs['metadata']['options']['input_filename'].default = 'execute.sh'
