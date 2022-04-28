@@ -40,7 +40,25 @@ append_text: " "
 
 ## Stand alone CalcJobs (SA)
 
-Turbo-Genius, however, so far does not provide full flexibility of inputs and output therefore another family of CalcJobs was made that does not rely on Turbo-Genius at all. Only a few of CalcJobs are present in this family
+Turbo-Genius, however, so far does not provide full flexibility of inputs and output therefore another family of CalcJobs was made that does not rely on Turbo-Genius at all. Only a few of CalcJobs are present in this family. The normal workflow with turbogenius follows as this:
+
+ - Prepare input files with `turbo-genius -j <job_name> -g <other_options>`
+   where job name is type of job
+ - Edit input files if necessary
+ - Run QMC code
+ - Postprocess with `turbo-genius -j <job_name> -post <other_options>`
+   where job name has to be the same as previous.
+
+One can setup the `other options` by passing parameters `Dict` with key value pairs, also if input namelist has to be updated (step 2), one can pass a dictonary with updated values under key `namelist_update`. Parameters for VMC optimization can look like this:
+
+```python
+parameters = { "optmethod"       : "lin",
+               "eq"              : 100,
+               "update_namelist" : { "nw"      : 100,
+                                     "ngen"    : 50000,
+                                     "nweight" : 250 }
+```
+
 
 ### How to setup WRP code
 
