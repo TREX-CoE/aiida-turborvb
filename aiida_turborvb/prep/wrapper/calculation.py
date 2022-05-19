@@ -6,7 +6,6 @@ from aiida.common import datastructures
 from aiida.engine import CalcJob
 from aiida.orm import SinglefileData, Dict, Str, Float, List
 from aiida.plugins import DataFactory
-from icecream import ic
 
 class TurboRVBPrepCalculationWRP(CalcJob):
     """

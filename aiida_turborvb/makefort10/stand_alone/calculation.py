@@ -130,8 +130,6 @@ class TurboRVBMakefort10CalculationSA(CalcJob):
         nh_system.update("natoms", len(ase_structure))
         nh_system.update("ntyp", len(atom_types))
 
-        from icecream import ic
-        ic(parameters)
         if "namelist_update" in parameters:
             for key, value in parameters["namelist_update"].items():
                 if key in nh_system.get_keys():

@@ -18,6 +18,8 @@ def prepare_VMCOPT_pars(pars):
     ret = {}
     if "vmcopt_namelist_update" in p:
         ret["namelist_update"] = p["vmcopt_namelist_update"]
+    if "vmcopt_eq" in p:
+        ret["eq"] = p["vmcopt_eq"]
     ret = Dict(dict=ret)
     return ret
 
@@ -79,7 +81,7 @@ class QMC(WorkChain):
 
     def vmc(self):
         inputs = dict( code       = self.inputs.vmc_code,
-                       fort10     = self.ctx.vmcopt.outputs.fort10,
+                       fort10     = self.ctx.vmcopt.outputs.fort10_averaged,
                        parameters = prepare_VMC_pars(self.inputs.parameters)
                      )
         if "pseudo" in self.inputs:
@@ -89,7 +91,7 @@ class QMC(WorkChain):
 
     def lrdmc(self):
         inputs = dict( code         = self.inputs.lrdmc_code,
-                       fort10       = self.ctx.vmcopt.outputs.fort10,
+                       fort10       = self.ctx.vmcopt.outputs.fort10_averaged,
                        fort11       = self.ctx.vmc.outputs.fort11,
                        fort12       = self.ctx.vmc.outputs.fort12,
                        scratch      = self.ctx.vmc.outputs.scratch,

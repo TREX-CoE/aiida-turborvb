@@ -2,7 +2,6 @@
 """ Calculations provided by aiida_turborvb turborvb main executable.
 """
 
-from icecream import ic
 from aiida.common import datastructures
 from aiida.engine import CalcJob
 from aiida.orm import SinglefileData, Dict, Str, StructureData

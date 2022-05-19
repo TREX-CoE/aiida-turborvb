@@ -39,11 +39,12 @@ class TurboRVBLrdmcParserWRP(Parser):
             for ii, line in enumerate(handle):
                 if ii == 1:
                     line_split = line.split()
-                    energy = Float(float(line[2]))
-                    energy_err = Float(float(line[3]))
+                    energy = Float(float(line_split[-2]))
+                    energy_err = Float(float(line_split[-1]))
                 if ii == 2:
-                    variance = Float(float(line[2]))
-                    variance_err = Float(float(line[3]))
+                    line_split = line.split()
+                    variance = Float(float(line_split[-2]))
+                    variance_err = Float(float(line_split[-1]))
 
 
         scratch = FolderData()
