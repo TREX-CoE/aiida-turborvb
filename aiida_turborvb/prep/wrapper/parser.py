@@ -29,29 +29,38 @@ class TurboRVBPrepParserWRP(Parser):
         output_filename = "prep.output" #self.node.get_option('output_filename')
 
         files_retrieved = self.retrieved.list_object_names()
-        with self.retrieved.open("fort.10_new", 'rb') as handle:
-            output_10 = SinglefileData(file=handle)
-        with self.retrieved.open("occupationlevels.dat", 'rb') as handle:
-            occfile = SinglefileData(file=handle)
+        try:
+            with self.retrieved.open("fort.10_new", 'rb') as handle:
+                output_10 = SinglefileData(file=handle)
+            with self.retrieved.open("occupationlevels.dat", 'rb') as handle:
+                occfile = SinglefileData(file=handle)
 
-        energy = 0.0
-        convergance = []
-        with self.retrieved.open(output_filename, 'r') as handle:
-            for line in handle:
-                if "Iter" in line:
-                    try:
-                        convergance.append(float(line.split()[5]))
-                    except IndexError:
-                        pass
-                if "inal self c" in line:
-                    energy = line.split()[6]
+            energy = 0.0
+            convergance = []
+            not_converged = False
+            with self.retrieved.open(output_filename, 'r') as handle:
+                for line in handle:
+                    if "Iter" in line:
+                        try:
+                            convergance.append(float(line.split()[5]))
+                        except IndexError:
+                            pass
+                    if "inal self c" in line:
+                        energy = line.split()[6]
+                    if "Warning Turbo-DFT  terminates without convergence" in line:
+                        not_converged = True
 
-        energy = Float(energy)
-        convergance = List(list=convergance)
+            energy = Float(energy)
+            convergance = List(list=convergance)
+        except FileNotFoundError:
+            return ExitCode(300)
 
         self.out('fort10', output_10)
         self.out('occfile', occfile)
         self.out('energy', energy)
         self.out('convergance', convergance)
+
+        if not_converged:
+            return ExitCode(501)
 
         return ExitCode(0)

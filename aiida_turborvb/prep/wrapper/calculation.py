@@ -26,20 +26,21 @@ class TurboRVBPrepCalculationWRP(CalcJob):
             'num_machines': 1,
             'num_mpiprocs_per_machine': 1,
         }
-        spec.input('parameters', valid_type=Dict, help='')
-        spec.input('fort10', valid_type=SinglefileData, help='')
-        spec.input('pseudo', valid_type=SinglefileData, required=False, help='')
+        spec.input('parameters', valid_type=Dict, help='Input parameters')
+        spec.input('fort10', valid_type=SinglefileData, help='Input fort.10 file containing wavefunction information')
+        spec.input('pseudo', valid_type=SinglefileData, required=False, help='Input pseudo potential file')
 
-        spec.output('fort10', valid_type=SinglefileData, help='')
-        spec.output('occfile', valid_type=SinglefileData, help='')
-        spec.output('energy', valid_type=Float, help='')
-        spec.output('convergance', valid_type=List, help='')
+        spec.output('fort10', valid_type=SinglefileData, help='Output fort.10 file with optimized molecular orbitals')
+        spec.output('occfile', valid_type=SinglefileData, help='File containing occupations of molecular orbitals')
+        spec.output('energy', valid_type=Float, help='Final SCF energy')
+        spec.output('convergance', valid_type=List, help='Energy convergance')
 
         spec.inputs['metadata']['options']['parser_name'].default = 'turborvb.prepwrp'
         spec.inputs['metadata']['options']['input_filename'].default = 'execute.sh'
         spec.inputs['metadata']['options']['output_filename'].default = 'execute.out'
 
         spec.exit_code(300, 'ERROR_MISSING_OUTPUT_FILES', message='Calculation did not produce all expected output files.')
+        spec.exit_code(501, 'ERROR_SCF_NOT_CONVERGED', message='Calculation did not converged.')
 
     def prepare_for_submission(self, folder):
         """
