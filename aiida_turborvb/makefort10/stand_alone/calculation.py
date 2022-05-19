@@ -126,7 +126,9 @@ class TurboRVBMakefort10CalculationSA(CalcJob):
         except:
             pass
 
-        nh_electrons.update("twobody", -6)
+        nh_electrons.update("twobody", -15)
+        if pseudo:
+            nh_electrons.update("twobody", -6)
         nh_system.update("natoms", len(ase_structure))
         nh_system.update("ntyp", len(atom_types))
 
